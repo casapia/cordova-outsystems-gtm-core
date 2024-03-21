@@ -1,0 +1,5 @@
+# Cordova Files
+platforms/
+plugins/
+www/
+node_modules/

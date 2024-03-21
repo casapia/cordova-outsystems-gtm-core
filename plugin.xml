@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="cordova-outsystems-gtm-core" version="0.1.0">
+    <name>GTM Core</name>
+    <description>Google Tag Manager Core</description>
+    <!-- 
+    <js-module src="www/main.js" name="gtmcore">
+        <clobbers target="gtmcore" />
+    </js-module> 
+    -->
+
+    <engines>
+        <engine name="cordova" version=">=10.0.0" />
+        <engine name="cordova-android" version=">=11.0.0" />
+    </engines>
+
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="CDVGTMCore">
+                <param name="android-package" value="cl.entel.plugins.GtmCorePlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+        <framework src="platform('com.google.android.gms:play-services-tagmanager:18.0.4')" />
+        <source-file src="src/android/GtmCorePlugin.java"
+        target-dir="src/cl/entel/plugins/" />
+    </platform>
+</plugin>
