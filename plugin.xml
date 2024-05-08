@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-outsystems-gtm-core" version="0.1.0">
+    id="cordova-outsystems-gtm-core" version="0.2.0">
     <name>GTM Core</name>
     <description>Google Tag Manager Core</description>
     <engines>
         <engine name="cordova" version=">=10.0.0" />
         <engine name="cordova-android" version=">=11.0.0" />
+        <engine name="cordova-ios" version=">=6.2.0" />
     </engines>
+
+    <platform name="ios">
+        <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/" />
+            </config>
+            <pods use-frameworks="true">
+                <pod name="GoogleTagManager" spec="~> 6.0" />
+            </pods>
+        </podspec>
+    </platform>
 
     <platform name="android">
         <framework src="com.google.android.gms:play-services-tagmanager:18.0.4" />

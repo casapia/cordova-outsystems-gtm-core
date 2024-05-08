@@ -1,11 +1,12 @@
 {
   "name": "cordova-outsystems-gtm-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "GTM Core, Google Tag Manager Core",
   "cordova": {
     "id": "cordova-outsystems-firebase-core",
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   },
   "keywords": [
