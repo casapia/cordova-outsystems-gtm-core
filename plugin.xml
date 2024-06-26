@@ -10,6 +10,9 @@
         <engine name="cordova-ios" version=">=6.2.0" />
     </engines>
 
+    <dependency id="cordova-plugin-firebase-analytics"
+        url="https://github.com/casapia/cordova-plugin-firebase-analytics#dev" />
+
     <platform name="ios">
         <podspec>
             <config>
