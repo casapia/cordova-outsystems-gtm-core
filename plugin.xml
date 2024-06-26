@@ -19,7 +19,7 @@
                 <source url="https://cdn.cocoapods.org/" />
             </config>
             <pods use-frameworks="true">
-                <pod name="GoogleTagManager" spec="~> 6.0" />
+                <pod name="GoogleTagManager" spec="~> 7.4.6" />
             </pods>
         </podspec>
     </platform>
