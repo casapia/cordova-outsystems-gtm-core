@@ -54,11 +54,13 @@ module.exports = function (context) {
     const project = xcode.project(pbxprojPath);
     project.parseSync();
 
-    const fileRef = project.addResourceFile(
-      path.join("container", "GTM-TMTPTRLZ_v2.json")
+    // Add the file reference
+    const fileReference = project.addFile(
+      "container/GTM-TMTPTRLZ_v2.json",
+      project.findPBXGroupKey({ name: "CustomTemplate" })
     );
 
-    if (fileRef) {
+    if (fileReference) {
       fs.writeFileSync(pbxprojPath, project.writeSync());
       console.log("Added GTM-TMTPTRLZ_v2.json to the Xcode project");
     } else {
