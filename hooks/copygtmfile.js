@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const xcode = require("xcode");
 
 module.exports = function (context) {
   const rootdir = context.opts.projectRoot;
@@ -31,5 +32,39 @@ module.exports = function (context) {
     console.log(`Copied ${srcFile} to ${destFile}`);
   } else {
     console.error(`Source file not found: ${srcFile}`);
+    return;
+  }
+
+  const xcodeProjDir = fs
+    .readdirSync(iosPlatformDir)
+    .find((file) => file.endsWith(".xcodeproj"));
+  if (!xcodeProjDir) {
+    console.error(
+      "Xcode project file not found in the platforms/ios directory"
+    );
+    return;
+  }
+
+  const pbxprojPath = path.join(
+    iosPlatformDir,
+    xcodeProjDir,
+    "project.pbxproj"
+  );
+  if (fs.existsSync(pbxprojPath)) {
+    const project = xcode.project(pbxprojPath);
+    project.parseSync();
+
+    const fileRef = project.addResourceFile(
+      path.join("container", "GTM-TMTPTRLZ_v2.json")
+    );
+
+    if (fileRef) {
+      fs.writeFileSync(pbxprojPath, project.writeSync());
+      console.log("Added GTM-TMTPTRLZ_v2.json to the Xcode project");
+    } else {
+      console.error("Failed to add GTM-TMTPTRLZ_v2.json to the Xcode project");
+    }
+  } else {
+    console.error(`Xcode project file not found: ${pbxprojPath}`);
   }
 };
