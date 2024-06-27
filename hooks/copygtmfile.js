@@ -5,28 +5,20 @@ const path = require("path");
 
 module.exports = function (context) {
   const rootdir = context.opts.projectRoot;
+  const srcContainerDir = path.join(rootdir, "src", "ios", "container");
+  const srcFile = path.join(srcContainerDir, "GTM-TMTPTRLZ_v2.json");
   const iosPlatformDir = path.join(rootdir, "platforms", "ios");
-  const containerSrc = path.join(
-    rootdir,
-    "src",
-    "ios",
-    "container",
-    "GTM-TMTPTRLZ_v2.json"
-  );
-  const containerDest = path.join(
-    iosPlatformDir,
-    "container",
-    "GTM-TMTPTRLZ_v2.json"
-  );
+  const destContainerDir = path.join(iosPlatformDir, "container");
+  const destFile = path.join(destContainerDir, "GTM-TMTPTRLZ_v2.json");
 
-  if (fs.existsSync(iosPlatformDir)) {
-    fs.mkdirSync(path.dirname(containerDest), { recursive: true });
+  if (fs.existsSync(srcFile)) {
+    if (!fs.existsSync(destContainerDir)) {
+      fs.mkdirSync(destContainerDir, { recursive: true });
+    }
 
-    fs.copyFileSync(containerSrc, containerDest);
-    console.log(`Copied GTM-XXXXXX.json to ${containerDest}`);
+    fs.copyFileSync(srcFile, destFile);
+    console.log(`Copied ${srcFile} to ${destFile}`);
   } else {
-    console.log(
-      "iOS platform not found. Ensure you have added the iOS platform and built the project."
-    );
+    console.error(`Source file not found: ${srcFile}`);
   }
 };
