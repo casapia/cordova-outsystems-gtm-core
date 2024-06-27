@@ -24,7 +24,7 @@
         </podspec>
 
         <hook type="after_prepare" src="hooks/copygtmfile.js" />
-        <resource-file src="src/ios/container/GTM-ios.json" target="container/GTM-ios.json" />
+        <resource-file src="src/ios/container/GTM-TMTPTRLZ_v2.json" target="container/GTM-TMTPTRLZ_v2.json" />
         <!-- <resource-file src="src/ios/container/GTM-TMTPTRLZ_v2.json" /> -->
         <!-- <resource-file src="src/ios/container/GTM-TMTPTRLZ_v2.json"
             target="container/GTM-TMTPTRLZ_v2.json" /> -->
