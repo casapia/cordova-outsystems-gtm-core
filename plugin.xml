@@ -22,6 +22,9 @@
                 <pod name="GoogleTagManager" spec="~> 7.4.6" />
             </pods>
         </podspec>
+
+        <resource-file src="src/ios/container/GTM-TMTPTRLZ_v2.json"
+            target="container/GTM-TMTPTRLZ_v2.json" />
     </platform>
 
     <platform name="android">
