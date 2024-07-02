@@ -3,6 +3,9 @@
 const fs = require("fs");
 const path = require("path");
 const xcode = require("xcode");
+// const plist = require('plist');
+
+const destFileName = "GTM-TMTPTRLZ_v2.json";
 
 module.exports = function (context) {
   const rootdir = context.opts.projectRoot;
@@ -12,61 +15,85 @@ module.exports = function (context) {
     "src",
     "ios",
     "container",
-    "GTM-TMTPTRLZ_v2.json"
+    destFileName
   );
   const iosPlatformDir = path.join(rootdir, "platforms", "ios");
   const destContainerDir = path.join(iosPlatformDir, "container");
-  const destFile = path.join(destContainerDir, "GTM-TMTPTRLZ_v2.json");
+  const destFile = path.join(destContainerDir, destFileName);
 
-  console.log(`Looking for source file: ${srcFile}`);
+  console.log(`******* Looking for source file: ${srcFile}`);
 
   if (fs.existsSync(srcFile)) {
-    console.log(`Source file found: ${srcFile}`);
+    console.log(`******* Source file found: ${srcFile}`);
 
     if (!fs.existsSync(destContainerDir)) {
       fs.mkdirSync(destContainerDir, { recursive: true });
-      console.log(`Created destination directory: ${destContainerDir}`);
+      console.log(`******* Created destination directory: ${destContainerDir}`);
     }
 
     fs.copyFileSync(srcFile, destFile);
-    console.log(`Copied ${srcFile} to ${destFile}`);
+    console.log(`******* Copied ${srcFile} to ${destFile}`);
   } else {
-    console.error(`Source file not found: ${srcFile}`);
+    console.error(`******* Source file not found: ${srcFile}`);
     return;
   }
 
-  const xcodeProjDir = fs
-    .readdirSync(iosPlatformDir)
-    .find((file) => file.endsWith(".xcodeproj"));
-  if (!xcodeProjDir) {
-    console.error(
-      "Xcode project file not found in the platforms/ios directory"
-    );
+  const platformRoot = path.join(context.opts.projectRoot, 'platforms/ios');
+  // Read the iOS project's config.xml to get the project name
+  const configXmlPath = path.join(context.opts.projectRoot, 'config.xml');
+  const configXml = fs.readFileSync(configXmlPath, 'utf8');
+  const projectNameMatch = configXml.match(/<name>([^<]*)<\/name>/);
+
+  if (!projectNameMatch) {
+    console.error('Could not find project name in config.xml');
     return;
   }
 
-  const pbxprojPath = path.join(
-    iosPlatformDir,
-    xcodeProjDir,
-    "project.pbxproj"
-  );
-  if (fs.existsSync(pbxprojPath)) {
-    const project = xcode.project(pbxprojPath);
-    project.parseSync();
+  // Read the iOS project file
+  const projectName = projectNameMatch[1].trim();
+  const projectPath = path.join(platformRoot, `${projectName}.xcodeproj`, 'project.pbxproj');
+  console.log(`******* Reading project file: ${projectPath}`);
 
-    // Add the file reference
-    const fileReference = project.addFile(
-      "container/GTM-TMTPTRLZ_v2.json",
-      project.findPBXGroupKey({ name: "CustomTemplate" })
-    );
+  // Read the iOS project's Info.plist to get the target name
+  const plistPath = path.join(platformRoot, projectName, `${projectName}-Info.plist`);
+  // const plistContent = fs.readFileSync(plistPath, 'utf8');
+  // const plistParsed = plist.parse(plistContent);
+  // const targetName = plistParsed.CFBundleName;
+  // console.log(`******* Target name: ${targetName}`);
 
-    if (fileReference) {
-      fs.writeFileSync(pbxprojPath, project.writeSync());
-      console.log("Added GTM-TMTPTRLZ_v2.json to the Xcode project");
-    } else {
-      console.error("Failed to add GTM-TMTPTRLZ_v2.json to the Xcode project");
-    }
-  } else {
-    console.error(`Xcode project file not found: ${pbxprojPath}`);
+  // Add the file to the Xcode project
+  const project = xcode.project(projectPath);
+  project.parseSync();
+  console.log(`******* Parsed project file: ${projectPath}`);
+
+  const fileToAdd = path.join('container', destFileName);
+  if (project.hasFile(fileToAdd)) {
+    console.log(`******* File ${fileToAdd} already exists in the project`);
+    return;
   }
+
+  // Determine the group dynamically or create a new one
+  const groupName = 'Container';
+  let group = project.pbxGroupByName(groupName);
+  console.log(`******* Group: ${group}`);
+
+  if (!group) {
+    // Create the group if it doesn't exist
+    group = project.addPbxGroup([], groupName, groupName);
+    project.addToPbxGroup(group, project.getFirstProject().firstProject.mainGroup);
+    console.log(`******* Created group: ${groupName}`);
+  }
+
+  const fileOptions = {
+    customFramework: true,
+    sourceTree: 'SOURCE_ROOT',
+    // target: targetName
+  };
+
+  project.addSourceFile(fileToAdd, fileOptions, group.uuid);
+  console.log(`******* Added ${fileToAdd} to the project`);
+
+  // Save the project file
+  fs.writeFileSync(projectPath, project.writeSync());
+  console.log(`******* Saved the project file: ${projectPath}`);
 };
