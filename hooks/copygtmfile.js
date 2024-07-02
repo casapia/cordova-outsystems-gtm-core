@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const xcode = require("xcode");
-// const plist = require('plist');
+const plist = require('plist');
 
 const destFileName = "GTM-TMTPTRLZ_v2.json";
 
@@ -54,13 +54,6 @@ module.exports = function (context) {
   const projectPath = path.join(platformRoot, `${projectName}.xcodeproj`, 'project.pbxproj');
   console.log(`******* Reading project file: ${projectPath}`);
 
-  // Read the iOS project's Info.plist to get the target name
-  const plistPath = path.join(platformRoot, projectName, `${projectName}-Info.plist`);
-  // const plistContent = fs.readFileSync(plistPath, 'utf8');
-  // const plistParsed = plist.parse(plistContent);
-  // const targetName = plistParsed.CFBundleName;
-  // console.log(`******* Target name: ${targetName}`);
-
   // Add the file to the Xcode project
   const project = xcode.project(projectPath);
   project.parseSync();
@@ -86,8 +79,7 @@ module.exports = function (context) {
 
   const fileOptions = {
     customFramework: true,
-    sourceTree: 'SOURCE_ROOT',
-    // target: targetName
+    sourceTree: 'SOURCE_ROOT'
   };
 
   project.addSourceFile(fileToAdd, fileOptions, group.uuid);
