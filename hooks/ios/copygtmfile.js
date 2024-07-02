@@ -64,25 +64,7 @@ module.exports = function (context) {
     console.error(`******* Could not add ${destContainerDir} to the project`);
     return;
   }
-
-  // const groupName = "Container2";
-  // let group = project.pbxGroupByName(groupName);
-  // console.log("******* Group: ", group);
-
-  // if (!group) {
-  //   // Create the group if it doesn't exist
-  //   group = project.addPbxGroup([], groupName, groupName.toLowerCase());
-  //   project.addToPbxGroup(group, project.getFirstProject().firstProject.mainGroup);
-  //   console.log(`******* Created group: ${groupName}`);
-  // }
-
-  // const fileOptions = {
-  //   customFramework: true,
-  //   sourceTree: "SOURCE_ROOT"
-  // };
-
-  // project.addSourceFile(destFile, fileOptions, group.uuid);
-  // console.log(`******* Added ${srcFile} to the project`);
+  console.log(`******* Added ${destContainerDir} to the project`);
 
   // Save the project file
   fs.writeFileSync(projectPath, project.writeSync());
