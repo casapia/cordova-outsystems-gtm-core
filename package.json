@@ -1,6 +1,6 @@
 {
   "name": "cordova-outsystems-gtm-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "GTM Core, Google Tag Manager Core",
   "cordova": {
     "id": "cordova-outsystems-firebase-core",
@@ -14,5 +14,8 @@
     "cordova-android"
   ],
   "author": "X Team, Entel",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "xcode": "^3.0.1"
+  }
 }

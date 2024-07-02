@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-outsystems-gtm-core" version="0.2.0">
+    id="cordova-outsystems-gtm-core" version="0.3.0">
     <name>GTM Core</name>
     <description>Google Tag Manager Core</description>
     <engines>
@@ -10,24 +10,23 @@
         <engine name="cordova-ios" version=">=6.2.0" />
     </engines>
 
-    <!-- <dependency id="cordova-plugin-firebase-analytics"
-        url="https://github.com/casapia/cordova-plugin-firebase-analytics#dev" /> -->
+    <dependency id="cordova-plugin-firebase-analytics"
+        url="https://github.com/casapia/cordova-plugin-firebase-analytics#dev" />
 
     <platform name="ios">
-        <!-- <podspec>
+        <podspec>
             <config>
                 <source url="https://cdn.cocoapods.org/" />
             </config>
             <pods use-frameworks="true">
                 <pod name="GoogleTagManager" spec="~> 7.4.6" />
             </pods>
-        </podspec> -->
+        </podspec>
 
-        <hook type="after_prepare" src="hooks/copygtmfile.js" />
-        <!-- <resource-file src="src/ios/container/GTM-TMTPTRLZ_v2.json" target="container/GTM-TMTPTRLZ_v2.json" /> -->
+        <hook type="after_prepare" src="hooks/ios/copygtmfile.js" />
     </platform>
 
-    <!-- <platform name="android">
+    <platform name="android">
         <framework src="com.google.android.gms:play-services-tagmanager:18.0.4" />
-    </platform> -->
+    </platform>
 </plugin>
