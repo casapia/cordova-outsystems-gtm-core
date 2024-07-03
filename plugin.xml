@@ -10,18 +10,18 @@
         <engine name="cordova-ios" version=">=6.2.0" />
     </engines>
 
-    <!-- <dependency id="cordova-plugin-firebase-analytics"
-        url="https://github.com/casapia/cordova-plugin-firebase-analytics#dev" /> -->
+    <dependency id="cordova-plugin-firebase-analytics"
+        url="https://github.com/casapia/cordova-plugin-firebase-analytics#dev" />
 
     <platform name="ios">
-        <!-- <podspec>
+        <podspec>
             <config>
                 <source url="https://cdn.cocoapods.org/" />
             </config>
             <pods use-frameworks="true">
                 <pod name="GoogleTagManager" spec="~> 7.4.6" />
             </pods>
-        </podspec> -->
+        </podspec>
 
         <hook type="after_prepare" src="hooks/ios/copygtmfile.js" />
     </platform>

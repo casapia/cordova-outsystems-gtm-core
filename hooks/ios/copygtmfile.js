@@ -62,19 +62,19 @@ module.exports = function (context) {
     return;
   }
 
-  const pbxGroupKey = project.findPBXGroupKey({ name: 'CustomTemplate' });
-  if (!pbxGroupKey) {
-    console.error(`******* Could not find PBXGroupKey 'CustomTemplate'`);
+  let containerGroupKey = project.getFirstProject().firstProject.mainGroup;
+  if (!containerGroupKey) {
+    console.error(`******* Could not find the container group in the project`);
     return;
   }
-  console.log(`******* Found PBXGroupKey 'CustomTemplate': ${pbxGroupKey}`);
+  console.log(`******* Found the container group in the project: ${containerGroupKey}`);
 
-  const resourceFile = project.addResourceFile(destFile, { target: project.getFirstTarget().uuid }, pbxGroupKey);
+  const resourceFile = project.addResourceFile(destContainerDir, {}, containerGroupKey);
   if (!resourceFile) {
-    console.error(`******* Could not add ${destFile} to the project`);
+    console.error(`******* Could not add ${destContainerDir} to the project`);
     return;
   }
-  console.log(`******* Added ${destFile} to the project`);
+  console.log(`******* Added ${destContainerDir} to the project`);
 
   fs.writeFileSync(projectPath, project.writeSync());
   console.log(`******* Saved the project file: ${projectPath}`);
