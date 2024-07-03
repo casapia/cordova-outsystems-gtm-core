@@ -18,7 +18,7 @@ module.exports = function (context) {
   const rootdir = context.opts.projectRoot;
   console.log(`******* Project root: ${rootdir}`);
   const pluginDir = context.opts.plugin.dir;
-  console.log(`******* Plugin directory: ${pluginDir}`);  
+  console.log(`******* Plugin directory: ${pluginDir}`);
   const srcFile = path.join(pluginDir, "src", "ios", "container", gtmContainerName);
   console.log(`******* Looking for source file: ${srcFile}`);
   if (!fs.existsSync(srcFile)) {
@@ -42,29 +42,21 @@ module.exports = function (context) {
   console.log(`******* Reading project file: ${projectPath}`);
 
   const project = xcode.project(projectPath);
-  try {
-    project.parseSync();
-    console.log(`******* Parsed project file: ${projectPath}`);
-  } catch (error) {
-    console.error(`******* Failed to parse project file: ${error.message}`);
-    return;
-  }
 
-  let pbxGroupKey = project.findPBXGroupKey({ name: 'Container' });
-  if (!pbxGroupKey) {
-    pbxGroupKey = project.pbxCreateGroup('Container', '""', 'SOURCE_ROOT');
-    project.addToPbxGroup(pbxGroupKey, project.findPBXGroupKey({ name: 'CustomTemplate' }));
-    console.log('******* Created PBXGroupKey: ', pbxGroupKey);
-  } else {
-    console.log('******* Found PBXGroupKey: ', pbxGroupKey);
-  }
+  project.parseSync();
 
-  const resourceFile = project.addResourceFile(destFile, {}, pbxGroupKey);
+  const pbxGroupKey = project.findPBXGroupKey({ name: 'CustomTemplate' });
+  const resourceFile = project.addResourceFile(
+    destContainerDir,
+    {},
+    pbxGroupKey
+  );
+
   if (!resourceFile) {
-    console.error(`******* Could not add ${destFile} to the project`);
+    console.error(`******* Could not add ${destContainerDir} to the project`);
     return;
   }
-  console.log(`******* Added ${destFile} to the project`);
+  console.log(`******* Added ${destContainerDir} to the project`);
 
   // Add the resource file to the build target
   project.addToPbxBuildFileSection(resourceFile);
