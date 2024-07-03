@@ -38,39 +38,43 @@ module.exports = function (context) {
   fs.copyFileSync(srcFile, destFile);
   console.log(`******* Copied ${srcFile} to ${destFile}`);
 
-  const projectPath = path.join(iosPlatformDir, `${projectName}.xcodeproj`, "project.pbxproj");
+  const xcodeprojPath = path.join(iosPlatformDir, `${projectName}.xcodeproj`);
+  console.log(`******* Checking for Xcode project at: ${xcodeprojPath}`);
+  if (!fs.existsSync(xcodeprojPath)) {
+    console.error(`******* Xcode project not found at: ${xcodeprojPath}`);
+    return;
+  }
+
+  const projectPath = path.join(xcodeprojPath, "project.pbxproj");
   console.log(`******* Reading project file: ${projectPath}`);
+  if (!fs.existsSync(projectPath)) {
+    console.error(`******* Project file not found: ${projectPath}`);
+    return;
+  }
 
   const project = xcode.project(projectPath);
 
-  project.parseSync();
+  try {
+    project.parseSync();
+    console.log(`******* Parsed project file: ${projectPath}`);
+  } catch (error) {
+    console.error(`******* Failed to parse project file: ${error.message}`);
+    return;
+  }
 
   const pbxGroupKey = project.findPBXGroupKey({ name: 'CustomTemplate' });
   if (!pbxGroupKey) {
     console.error(`******* Could not find PBXGroupKey 'CustomTemplate'`);
     return;
   }
+  console.log(`******* Found PBXGroupKey 'CustomTemplate': ${pbxGroupKey}`);
 
-  const resourceFile = project.addResourceFile(
-    destContainerDir,
-    {},
-    pbxGroupKey
-  );
-
+  const resourceFile = project.addResourceFile(destFile, { target: project.getFirstTarget().uuid }, pbxGroupKey);
   if (!resourceFile) {
-    console.error(`******* Could not add ${destContainerDir} to the project`);
+    console.error(`******* Could not add ${destFile} to the project`);
     return;
   }
-  console.log(`******* Added ${destContainerDir} to the project`);
-
-  // Add the resource file to the build target
-  const target = project.getFirstTarget().uuid;
-  if (!target) {
-    console.error(`******* Could not find the build target`);
-    return;
-  }
-  project.addToPbxBuildFileSection(resourceFile);
-  project.addToPbxResourcesBuildPhase({ fileRef: resourceFile.fileRef, target: target });
+  console.log(`******* Added ${destFile} to the project`);
 
   fs.writeFileSync(projectPath, project.writeSync());
   console.log(`******* Saved the project file: ${projectPath}`);
