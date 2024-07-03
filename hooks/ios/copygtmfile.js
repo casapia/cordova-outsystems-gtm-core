@@ -18,7 +18,7 @@ module.exports = function (context) {
   const rootdir = context.opts.projectRoot;
   console.log(`******* Project root: ${rootdir}`);
   const pluginDir = context.opts.plugin.dir;
-  console.log(`******* Plugin directory: ${pluginDir}`);
+  console.log(`******* Plugin directory: ${pluginDir}`);  
   const srcFile = path.join(pluginDir, "src", "ios", "container", gtmContainerName);
   console.log(`******* Looking for source file: ${srcFile}`);
   if (!fs.existsSync(srcFile)) {
@@ -50,9 +50,9 @@ module.exports = function (context) {
     return;
   }
 
-  let pbxGroupKey = project.findPBXGroupKey({ name: 'container' });
+  let pbxGroupKey = project.findPBXGroupKey({ name: 'Container' });
   if (!pbxGroupKey) {
-    pbxGroupKey = project.pbxCreateGroup('container', '""', 'SOURCE_ROOT');
+    pbxGroupKey = project.pbxCreateGroup('Container', '""', 'SOURCE_ROOT');
     project.addToPbxGroup(pbxGroupKey, project.findPBXGroupKey({ name: 'CustomTemplate' }));
     console.log('******* Created PBXGroupKey: ', pbxGroupKey);
   } else {
@@ -65,6 +65,10 @@ module.exports = function (context) {
     return;
   }
   console.log(`******* Added ${destFile} to the project`);
+
+  // Add the resource file to the build target
+  project.addToPbxBuildFileSection(resourceFile);
+  project.addToPbxResourcesBuildPhase(resourceFile);
 
   fs.writeFileSync(projectPath, project.writeSync());
   console.log(`******* Saved the project file: ${projectPath}`);
