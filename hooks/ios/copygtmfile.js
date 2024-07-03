@@ -5,7 +5,7 @@ const path = require("path");
 const xcode = require("xcode");
 const { ConfigParser } = require("cordova-common");
 
-const gtmContainerName = "GTM-TMTPTRLZ.json";
+const gtmContainerName = "GTM-TMTPTRLZ_v2.json";
 
 module.exports = function (context) {
   function getAppName(context) {
