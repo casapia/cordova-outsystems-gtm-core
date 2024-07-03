@@ -46,6 +46,11 @@ module.exports = function (context) {
   project.parseSync();
 
   const pbxGroupKey = project.findPBXGroupKey({ name: 'CustomTemplate' });
+  if (!pbxGroupKey) {
+    console.error(`******* Could not find PBXGroupKey 'CustomTemplate'`);
+    return;
+  }
+
   const resourceFile = project.addResourceFile(
     destContainerDir,
     {},
@@ -59,8 +64,13 @@ module.exports = function (context) {
   console.log(`******* Added ${destContainerDir} to the project`);
 
   // Add the resource file to the build target
+  const target = project.getFirstTarget().uuid;
+  if (!target) {
+    console.error(`******* Could not find the build target`);
+    return;
+  }
   project.addToPbxBuildFileSection(resourceFile);
-  project.addToPbxResourcesBuildPhase(resourceFile);
+  project.addToPbxResourcesBuildPhase({ fileRef: resourceFile.fileRef, target: target });
 
   fs.writeFileSync(projectPath, project.writeSync());
   console.log(`******* Saved the project file: ${projectPath}`);
