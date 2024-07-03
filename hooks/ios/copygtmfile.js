@@ -7,6 +7,13 @@ const xcode = require("xcode");
 const gtmContainerName = "GTM-TMTPTRLZ_v2.json";
 
 module.exports = function (context) {
+  function getAppName(context) {
+    const ConfigParser = context.requireCordovaModule("cordova-lib").configparser;
+    var config = new ConfigParser("config.xml");
+    return config.name();
+  }
+
+  const projectName = getAppName(context);
   const rootdir = context.opts.projectRoot;
   const pluginDir = context.opts.plugin.dir;
   const srcFile = path.join(
@@ -23,7 +30,7 @@ module.exports = function (context) {
   }
 
   const iosPlatformDir = path.join(rootdir, "platforms", "ios");
-  const destContainerDir = path.join(iosPlatformDir, "container");
+  const destContainerDir = path.join(iosPlatformDir, projectName, "container");
   const destFile = path.join(destContainerDir, gtmContainerName);
 
   if (!fs.existsSync(destContainerDir)) {
@@ -35,17 +42,17 @@ module.exports = function (context) {
   console.log(`******* Copied ${srcFile} to ${destFile}`);
 
   // Add the file to the Xcode project
-  const configXmlPath = path.join(rootdir, "config.xml");
-  const configXml = fs.readFileSync(configXmlPath, "utf8");
-  const projectNameMatch = configXml.match(/<name>([^<]*)<\/name>/);
+  // const configXmlPath = path.join(rootdir, "config.xml");
+  // const configXml = fs.readFileSync(configXmlPath, "utf8");
+  // const projectNameMatch = configXml.match(/<name>([^<]*)<\/name>/);
 
-  if (!projectNameMatch) {
-    console.error("Could not find project name in config.xml");
-    return;
-  }
+  // if (!projectNameMatch) {
+  //   console.error("Could not find project name in config.xml");
+  //   return;
+  // }
 
-  const projectName = projectNameMatch[1].trim();
-  console.log(`******* Found project name: ${projectName}`);
+  // const projectName = projectNameMatch[1].trim();
+  // console.log(`******* Found project name: ${projectName}`);
   const projectPath = path.join(iosPlatformDir, `${projectName}.xcodeproj`, "project.pbxproj");
   console.log(`******* Reading project file: ${projectPath}`);
 
