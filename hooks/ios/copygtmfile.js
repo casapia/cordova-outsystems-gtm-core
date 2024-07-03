@@ -3,26 +3,23 @@
 const fs = require("fs");
 const path = require("path");
 const xcode = require("xcode");
+const { ConfigParser } = require("cordova-common");
 
 const gtmContainerName = "GTM-TMTPTRLZ_v2.json";
 
 module.exports = function (context) {
   function getAppName(context) {
-    const ConfigParser = context.requireCordovaModule("cordova-lib").configparser;
-    var config = new ConfigParser("config.xml");
+    const config = new ConfigParser(path.join(context.opts.projectRoot, "config.xml"));
     return config.name();
   }
 
   const projectName = getAppName(context);
+  console.log(`******* Project name: ${projectName}`);
   const rootdir = context.opts.projectRoot;
+  console.log(`******* Project root: ${rootdir}`);
   const pluginDir = context.opts.plugin.dir;
-  const srcFile = path.join(
-    pluginDir,
-    "src",
-    "ios",
-    "container",
-    gtmContainerName
-  );
+  console.log(`******* Plugin directory: ${pluginDir}`);
+  const srcFile = path.join(pluginDir, "src", "ios", "container", gtmContainerName);
   console.log(`******* Looking for source file: ${srcFile}`);
   if (!fs.existsSync(srcFile)) {
     console.error(`******* Source file not found: ${srcFile}`);
@@ -45,26 +42,30 @@ module.exports = function (context) {
   console.log(`******* Reading project file: ${projectPath}`);
 
   const project = xcode.project(projectPath);
-  project.parseSync();
-  console.log(`******* Parsed project file: ${projectPath}`);
+  try {
+    project.parseSync();
+    console.log(`******* Parsed project file: ${projectPath}`);
+  } catch (error) {
+    console.error(`******* Failed to parse project file: ${error.message}`);
+    return;
+  }
 
-  let pbxGroupKey = project.findPBXGroupKey({ name: 'Container' });
+  let pbxGroupKey = project.findPBXGroupKey({ name: 'container' });
   if (!pbxGroupKey) {
-    pbxGroupKey = project.pbxCreateGroup('Container', '""', 'SOURCE_ROOT');
+    pbxGroupKey = project.pbxCreateGroup('container', '""', 'SOURCE_ROOT');
     project.addToPbxGroup(pbxGroupKey, project.findPBXGroupKey({ name: 'CustomTemplate' }));
     console.log('******* Created PBXGroupKey: ', pbxGroupKey);
   } else {
     console.log('******* Found PBXGroupKey: ', pbxGroupKey);
   }
-  const resourceFile = project.addResourceFile(destContainerDir, {}, pbxGroupKey);
 
+  const resourceFile = project.addResourceFile(destFile, {}, pbxGroupKey);
   if (!resourceFile) {
-    console.error(`******* Could not add ${destContainerDir} to the project`);
+    console.error(`******* Could not add ${destFile} to the project`);
     return;
   }
-  console.log(`******* Added ${destContainerDir} to the project`);
+  console.log(`******* Added ${destFile} to the project`);
 
-  // Save the project file
   fs.writeFileSync(projectPath, project.writeSync());
   console.log(`******* Saved the project file: ${projectPath}`);
 };
