@@ -41,18 +41,6 @@ module.exports = function (context) {
   fs.copyFileSync(srcFile, destFile);
   console.log(`******* Copied ${srcFile} to ${destFile}`);
 
-  // Add the file to the Xcode project
-  // const configXmlPath = path.join(rootdir, "config.xml");
-  // const configXml = fs.readFileSync(configXmlPath, "utf8");
-  // const projectNameMatch = configXml.match(/<name>([^<]*)<\/name>/);
-
-  // if (!projectNameMatch) {
-  //   console.error("Could not find project name in config.xml");
-  //   return;
-  // }
-
-  // const projectName = projectNameMatch[1].trim();
-  // console.log(`******* Found project name: ${projectName}`);
   const projectPath = path.join(iosPlatformDir, `${projectName}.xcodeproj`, "project.pbxproj");
   console.log(`******* Reading project file: ${projectPath}`);
 
@@ -60,12 +48,15 @@ module.exports = function (context) {
   project.parseSync();
   console.log(`******* Parsed project file: ${projectPath}`);
 
-  const pbxGroupKey = project.findPBXGroupKey({ name: 'CustomTemplate' });
-  const resourceFile = project.addResourceFile(
-    destContainerDir,
-    {},
-    pbxGroupKey
-  );
+  let pbxGroupKey = project.findPBXGroupKey({ name: 'Container' });
+  if (!pbxGroupKey) {
+    pbxGroupKey = project.pbxCreateGroup('Container', '""', 'SOURCE_ROOT');
+    project.addToPbxGroup(pbxGroupKey, project.findPBXGroupKey({ name: 'CustomTemplate' }));
+    console.log('******* Created PBXGroupKey: ', pbxGroupKey);
+  } else {
+    console.log('******* Found PBXGroupKey: ', pbxGroupKey);
+  }
+  const resourceFile = project.addResourceFile(destContainerDir, {}, pbxGroupKey);
 
   if (!resourceFile) {
     console.error(`******* Could not add ${destContainerDir} to the project`);
