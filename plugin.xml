@@ -23,7 +23,7 @@
             </pods>
         </podspec>
 
-        <hook type="after_prepare" src="hooks/ios/copygtmfile.js" />
+        <hook type="after_plugin_install" src="hooks/ios/copygtmfile.js" />
     </platform>
 
     <platform name="android">
