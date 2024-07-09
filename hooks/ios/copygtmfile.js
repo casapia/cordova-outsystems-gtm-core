@@ -8,16 +8,16 @@ const { ConfigParser } = require("cordova-common");
 const gtmContainerName = "GTM-TMTPTRLZ.json";
 
 module.exports = function (context) {
-  // Access custom variable from config.xml
-  const customVariable = context.opts.plugin.pluginInfo.getPreferences(
-    "MY_CUSTOM_VARIABLE",
-    "ios"
-  );
-  console.log("Custom variable MY_CUSTOM_VARIABLE:", JSON.stringify(customVariable));
-
   const config = new ConfigParser(
     path.join(context.opts.projectRoot, "config.xml")
   );
+
+  //
+  const customVariable = config.getPlatformPreference("MY_CUSTOM_VARIABLE", "ios");
+  console.log(`******* Custom variable: ${customVariable}`);
+  //
+
+
   const projectName = config.name();
   console.log(`******* Project name: ${projectName}`);
   const rootdir = context.opts.projectRoot;

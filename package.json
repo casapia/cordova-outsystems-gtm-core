@@ -16,6 +16,7 @@
   "author": "X Team, Entel",
   "license": "MIT",
   "devDependencies": {
+    "cordova-common": "^5.0.0",
     "xcode": "^3.0.1"
   }
 }
