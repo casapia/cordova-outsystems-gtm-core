@@ -8,18 +8,29 @@ const { ConfigParser } = require("cordova-common");
 const gtmContainerName = "GTM-TMTPTRLZ.json";
 
 module.exports = function (context) {
-  function getAppName(context) {
-    const config = new ConfigParser(path.join(context.opts.projectRoot, "config.xml"));
-    return config.name();
-  }
+  // Access custom variable from config.xml
+  const customVariable = context.opts.plugin.pluginInfo.getPreferences(
+    "MY_CUSTOM_VARIABLE",
+    "ios"
+  );
+  console.log(`Custom variable MY_CUSTOM_VARIABLE: ${customVariable}`);
 
-  const projectName = getAppName(context);
+  const config = new ConfigParser(
+    path.join(context.opts.projectRoot, "config.xml")
+  );
+  const projectName = config.name();
   console.log(`******* Project name: ${projectName}`);
   const rootdir = context.opts.projectRoot;
   console.log(`******* Project root: ${rootdir}`);
   const pluginDir = context.opts.plugin.dir;
   console.log(`******* Plugin directory: ${pluginDir}`);
-  const srcFile = path.join(pluginDir, "src", "ios", "container", gtmContainerName);
+  const srcFile = path.join(
+    pluginDir,
+    "src",
+    "ios",
+    "container",
+    gtmContainerName
+  );
   console.log(`******* Looking for source file: ${srcFile}`);
   if (!fs.existsSync(srcFile)) {
     console.error(`******* Source file not found: ${srcFile}`);
@@ -67,9 +78,15 @@ module.exports = function (context) {
     console.error(`******* Could not find the container group in the project`);
     return;
   }
-  console.log(`******* Found the container group in the project: ${containerGroupKey}`);
+  console.log(
+    `******* Found the container group in the project: ${containerGroupKey}`
+  );
 
-  const resourceFile = project.addResourceFile(destContainerDir, {}, containerGroupKey);
+  const resourceFile = project.addResourceFile(
+    destContainerDir,
+    {},
+    containerGroupKey
+  );
   if (!resourceFile) {
     console.error(`******* Could not add ${destContainerDir} to the project`);
     return;
