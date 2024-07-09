@@ -13,7 +13,7 @@ module.exports = function (context) {
     "MY_CUSTOM_VARIABLE",
     "ios"
   );
-  console.log(`Custom variable MY_CUSTOM_VARIABLE: ${customVariable}`);
+  console.log("Custom variable MY_CUSTOM_VARIABLE:", JSON.stringify(customVariable));
 
   const config = new ConfigParser(
     path.join(context.opts.projectRoot, "config.xml")
