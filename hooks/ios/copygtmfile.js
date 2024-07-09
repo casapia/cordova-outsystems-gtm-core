@@ -1,46 +1,39 @@
 #!/usr/bin/env node
-
 const fs = require("fs");
 const path = require("path");
 const xcode = require("xcode");
 const { ConfigParser } = require("cordova-common");
-
-const gtmContainerName = "GTM-TMTPTRLZ.json";
 
 module.exports = function (context) {
   const config = new ConfigParser(
     path.join(context.opts.projectRoot, "config.xml")
   );
 
-  //
-  const customVariable = config.getPlatformPreference("MY_CUSTOM_VARIABLE", "ios");
-  console.log(`******* Custom variable: ${customVariable}`);
-  //
-
-
+  const gtmContainerName = config.getPlatformPreference(
+    "GTM_CONTAINER_NAME",
+    "ios"
+  );
+  console.log(`******* GTM container name: ${gtmContainerName}`);
+  if (!gtmContainerName) {
+    console.error("******* GTM container name not found in config.xml");
+    return;
+  }
+  
   const projectName = config.name();
   console.log(`******* Project name: ${projectName}`);
   const rootdir = context.opts.projectRoot;
   console.log(`******* Project root: ${rootdir}`);
-  const pluginDir = context.opts.plugin.dir;
-  console.log(`******* Plugin directory: ${pluginDir}`);
-  const srcFile = path.join(
-    pluginDir,
-    "src",
-    "ios",
-    "container",
-    gtmContainerName
-  );
+
+  const iosPlatformDir = path.join(rootdir, "platforms", "ios");
+  const wwwPath = path.join(iosPlatformDir, "www");
+  const srcFile = path.join(wwwPath, gtmContainerName);
   console.log(`******* Looking for source file: ${srcFile}`);
   if (!fs.existsSync(srcFile)) {
     console.error(`******* Source file not found: ${srcFile}`);
     return;
   }
-
-  const iosPlatformDir = path.join(rootdir, "platforms", "ios");
   const destContainerDir = path.join(iosPlatformDir, projectName, "container");
   const destFile = path.join(destContainerDir, gtmContainerName);
-
   if (!fs.existsSync(destContainerDir)) {
     fs.mkdirSync(destContainerDir, { recursive: true });
     console.log(`******* Created destination directory: ${destContainerDir}`);
